@@ -315,8 +315,7 @@ easi <- function(shares = shares, log.price = log.price, var.soc = NULL,
 
   system <- list()
   for (i in 1:neq) {
-    system <- c(system, list(formula(paste(paste0("eqS", i), "<-",
-      paste0("s", i), "~", form6))))
+    system <- c(system, list(reformulate(termlabels = form6, response = as.character(paste("s",i,sep="")))))
   }
 
   # Creation of the list of instruments for the 3SLS estimation
