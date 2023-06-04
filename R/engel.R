@@ -192,7 +192,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
     result$w.pctile.lower <- Wmem
   }
 
-  write.file <- ifelse(file, TRUE, FALSE)
+  write.file <- ifelse(file != FALSE & !is.na(file), TRUE, FALSE)
   if (write.file) {
     # management of labels.share
     if (length(labels.share) < 2)
