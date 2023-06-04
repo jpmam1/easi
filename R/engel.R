@@ -144,8 +144,6 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
 
     for (i in 1:neq) {
       idx <- (d[i]+1):d[i+1]
-      # Substantially faster and uses less memory than MAT %*% D[…] %*% t(MAT)
-      # when MAT is large; thanks https://stackoverflow.com/a/21708690/2362198
       W_ecart[, i] <- sqrt(rowSums((MAT %*% D[idx, idx]) * MAT))
     }
 
@@ -195,9 +193,9 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
   write.file <- ifelse(file != FALSE & !is.na(file), TRUE, FALSE)
   if (write.file) {
     # management of labels.share
-    if (length(labels.share) < 2)
+    if (length(labels.share) < 2) {
       labels.share <- noms
-
+    }
     limYY <- c()
     if (length(lim.y) < 2) {
       for (i in 1:neq) {
@@ -208,10 +206,8 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
     }
 
     ss <- seq(1, neq * 2, by = 2)
-
     # Export of Engel curves in the parent folder under the name 'file'.
-    # PDF filename is entered on the command line
-
+    
     pdf(paste0(file, ".pdf"))
 
     xx <- seq(1, 100, len = 20)
@@ -238,12 +234,12 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
       lines(c(1:100), y.predict, col = "blue")
       lines(ksmooth(c(1:100), Wm[, i], "normal", bandwidth = 10), col = "black")
 
-      if (WDELTA) {
+      if (!is.na(WDELTA)) {
         points(c((1:20) * 5), Wmep[, i], pch = "+", cex = 1, col = "violet")
         points(c((1:20) * 5), Wmem[, i], pch = "+", cex = 1, col = "violet")
       }
     }
-
+    
     dev.off()
   }
 
