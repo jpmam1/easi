@@ -16,7 +16,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
   #  w.pctile.upper: confidence interval, upper bound.
   #  w.pctile.lower: confidence interval, lower bound.
 
-  WDELTA <- ifelse(sd, TRUE, FALSE)
+  WDELTA <- ifelse(sd != FALSE & !is.na(sd), TRUE, FALSE)
   fit3sls <- object$fit3sls
   var.soc <- object$var.soc
   log.price <- object$log.price
