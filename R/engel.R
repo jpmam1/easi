@@ -212,7 +212,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
 
     xx <- seq(1, 100, len = 20)
 
-    for (i in 1:neq) {
+    for (i in 1:(neq + 1)) {
       # smoothing cubic
       sp <- smooth.spline(c(1:100), Wm[, i], spar = 0.9)
       y.loess <- loess(Wm[, i] ~ c(1:100), span = 0.75,
@@ -221,7 +221,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
 
       plot(c(1:100), Wm[, i], xlab = "Percentiles of total expenditure",
            ylab = "Budget shares", col = "green",
-           ylim = c(limYY[ss[i]], limYY[ss[i] + 1]))
+           ylim = ifelse(!is.na(limYY[ss[i]]), c(limYY[ss[i]], limYY[ss[i] + 1])), c(0, 1))
 
       if (i <= neq) {
         title(main = labels.share[i])
