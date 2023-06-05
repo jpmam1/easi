@@ -221,7 +221,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
 
       plot(c(1:100), Wm[, i], xlab = "Percentiles of total expenditure",
            ylab = "Budget shares", col = "green",
-           ylim = ifelse(!is.na(limYY[ss[i]]), c(limYY[ss[i]], limYY[ss[i] + 1]), c(0, 1))
+           ylim = ifelse(!is.na(limYY[ss[i]]), c(limYY[ss[i]], limYY[ss[i] + 1]), c(0, 1)))
 
       if (i <= neq) {
         title(main = labels.share[i])
