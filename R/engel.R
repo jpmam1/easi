@@ -16,7 +16,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
   #  w.pctile.upper: confidence interval, upper bound.
   #  w.pctile.lower: confidence interval, lower bound.
 
-  WDELTA <- ifelse(sd != FALSE & !is.na(sd), TRUE, FALSE)
+  WDELTA <- !missing(sd)
   fit3sls <- object$fit3sls
   var.soc <- object$var.soc
   log.price <- object$log.price
@@ -61,21 +61,21 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
       tot3 <- tot3 + tempo
     }
 
-    if (nsoc) {
+    if (!missing(nsoc)) {
       for (j in 1:nsoc) {
         tempo <- gjt[j, i] * Z[, j + 1]
         tot4 <- tot4 + tempo
       }
     }
 
-    if (zy.inter) {
+    if (!missing(zy.inter)) {
       for (j in 1:nsoc) {
         tempo <- hjt[j, i] * Z[, j + 1] * y
         tot5 <- tot5 + tempo
       }
     }
 
-    if (pz.inter) {
+    if (!missing(pz.inter)) {
       for (k in 1:neq) {
         for (t in (1:(nsoc + 1))) {
           tempo <- ajk[t, k, i] * Z[, t] * P[, k]
@@ -84,7 +84,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
       }
     }
 
-    if (py.inter) {
+    if (!missing(py.inter)) {
       for (k in 1:neq) {
         tempo <- bjk[k, i] * P[, k] * y
         tot7 <- tot7 + tempo
@@ -101,20 +101,20 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
 
   # Calculation of standard deviations of the fitted budget shares (delta
   # method)
-  if (WDELTA) {
+  if (!missing(WDELTA) & !is.na(WDELTA)) {
     MAT <- rep(1, n)
 
     for (i in 1:y.power) {
       MAT <- cbind(MAT, y^i)
     }
 
-    if (nsoc) {
+    if (!missing(nsoc)) {
       for (i in 1:nsoc) {
         MAT <- cbind(MAT, Z[, i + 1])
       }
     }
 
-    if (zy.inter) {
+    if (!missing(zy.inter)) {
       for (i in 1:nsoc) MAT <- cbind(MAT, y * Z[, i + 1])
     }
 
@@ -122,13 +122,13 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
       MAT <- cbind(MAT, P[, i])
     }
 
-    if (py.inter) {
+    if (!missing(py.inter)) {
       for (i in 1:neq) {
         MAT <- cbind(MAT, y * P[, i])
       }
     }
 
-    if (pz.inter) {
+    if (!missing(pz.inter)) {
       for (i in interpz) {
         for (j in 1:neq) {
           MAT <- cbind(MAT, Z[, i + 1] * P[, j])
@@ -157,7 +157,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
   Wm <- matrix(0, 100, neq)
   for (i in 1:100) {
     for (j in 1:neq) {
-      Wm[i, j] <- median(W[ee == i, j])
+      Wm[i, j] <- median(W[ee == i, j], na.rm = TRUE)
     }
   }
 
@@ -166,7 +166,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
   result$w.pctile <- Wm
 
   # Confidence intervals for fitted budget shares
-  if (WDELTA) {
+  if (!missing(WDELTA) & !is.na(WDELTA) & WDELTA != FALSE) {
     Wme <- matrix(0, 100, neq + 1)
     for (i in 1:100) {
       for (j in 1:neq) {
@@ -191,14 +191,14 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
   }
 
   write.file <- ifelse(file != FALSE & !is.na(file), TRUE, FALSE)
-  if (write.file) {
+  if (!missing(write.file)) {
     # management of labels.share
     if (length(labels.share) < 2) {
       labels.share <- noms
     }
     limYY <- c()
     if (length(lim.y) < 2) {
-      for (i in 1:neq) {
+      for (i in 1:(neq + 1)) {
         limYY <- c(limYY, c(0, summary(w[, i])[5]))
       }
     } else {
@@ -212,7 +212,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
 
     xx <- seq(1, 100, len = 20)
 
-    for (i in 1:(neq + 1)) {
+    for (i in 0:(neq + 1)) {
       # smoothing cubic
       sp <- smooth.spline(c(1:100), Wm[, i], spar = 0.9)
       y.loess <- loess(Wm[, i] ~ c(1:100), span = 0.75,
@@ -221,7 +221,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
 
       plot(c(1:100), Wm[, i], xlab = "Percentiles of total expenditure",
            ylab = "Budget shares", col = "green",
-           ylim = ifelse(!is.na(limYY[ss[i]]), c(limYY[ss[i]], limYY[ss[i] + 1])), c(0, 1))
+           ylim = ifelse(!is.na(limYY[ss[i]]), c(limYY[ss[i]], limYY[ss[i] + 1]), c(0, 1))
 
       if (i <= neq) {
         title(main = labels.share[i])
