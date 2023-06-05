@@ -212,8 +212,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
       y.predict <- predict(y.loess, data.frame(xxx = c(1:100)))
 
       plot(c(1:100), Wm[, i], xlab = "Percentiles of total expenditure",
-           ylab = "Budget shares", col = "green",
-           ylim = c(0, 1))
+           ylab = "Budget shares", col = "green")
 
       if (i <= neq) {
         title(main = labels.share[i])
