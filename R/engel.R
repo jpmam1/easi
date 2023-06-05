@@ -16,7 +16,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
   #  w.pctile.upper: confidence interval, upper bound.
   #  w.pctile.lower: confidence interval, lower bound.
 
-  WDELTA <- !missing(sd)
+  WDELTA <- sd
   fit3sls <- object$fit3sls
   var.soc <- object$var.soc
   log.price <- object$log.price
@@ -101,7 +101,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
 
   # Calculation of standard deviations of the fitted budget shares (delta
   # method)
-  if (!missing(WDELTA) & !is.na(WDELTA)) {
+  if (!is.na(WDELTA)) {
     MAT <- rep(1, n)
 
     for (i in 1:y.power) {
@@ -157,7 +157,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
   Wm <- matrix(0, 100, neq)
   for (i in 1:100) {
     for (j in 1:neq) {
-      Wm[i, j] <- median(W[ee == i, j], na.rm = TRUE)
+      Wm[i, j] <- median(W[ee == i, j])
     }
   }
 
@@ -166,7 +166,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
   result$w.pctile <- Wm
 
   # Confidence intervals for fitted budget shares
-  if (!missing(WDELTA) & !is.na(WDELTA) & WDELTA != FALSE) {
+  if (WDELTA != FALSE) {
     Wme <- matrix(0, 100, neq + 1)
     for (i in 1:100) {
       for (j in 1:neq) {
@@ -190,19 +190,11 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
     result$w.pctile.lower <- Wmem
   }
 
-  write.file <- ifelse(file != FALSE & !is.na(file), TRUE, FALSE)
-  if (!missing(write.file)) {
+  write.file <- file
+  if (write.file != FALSE) {
     # management of labels.share
     if (length(labels.share) < 2) {
       labels.share <- noms
-    }
-    limYY <- c()
-    if (length(lim.y) < 2) {
-      for (i in 1:(neq + 1)) {
-        limYY <- c(limYY, c(0, summary(w[, i])[5]))
-      }
-    } else {
-      limYY <- lim.y
     }
 
     ss <- seq(1, neq * 2, by = 2)
@@ -221,7 +213,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
 
       plot(c(1:100), Wm[, i], xlab = "Percentiles of total expenditure",
            ylab = "Budget shares", col = "green",
-           ylim = ifelse(!is.na(limYY[ss[i]]), c(limYY[ss[i]], limYY[ss[i] + 1]), c(0, 1)))
+           ylim = c(0, 1))
 
       if (i <= neq) {
         title(main = labels.share[i])
