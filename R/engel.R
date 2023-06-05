@@ -212,7 +212,7 @@ engel <- function(object = object, file = FALSE, sd = FALSE, lim.y = FALSE) {
 
     xx <- seq(1, 100, len = 20)
 
-    for (i in 0:(neq + 1)) {
+    for (i in 1:(neq + 1)) {
       # smoothing cubic
       sp <- smooth.spline(c(1:100), Wm[, i], spar = 0.9)
       y.loess <- loess(Wm[, i] ~ c(1:100), span = 0.75,
